@@ -151,8 +151,10 @@ if (cmd === 'resolve') {
   require('./lib/import-library').runImport(process.argv.slice(3)).catch(die);
 } else if (cmd === 'adopt') {
   require('./lib/adopt').adoptLocal({ dryRun: process.argv.includes('--dry-run') });
+} else if (cmd === 'scrub') {
+  require('./lib/scrub').scrubAll();   // sweep ALL of media/ for location/PII metadata
 } else if (cmd && cmd !== 'serve') {
-  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …|adopt]');
+  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …|adopt|scrub]');
   process.exit(1);
 } else {
   serve();

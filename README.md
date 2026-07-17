@@ -84,9 +84,13 @@ can reference this one's media.
 
 ## Privacy
 
-`pack` strips location + PII (GPS, device make/model/serial, owner, host) from
-every file **before** it is encrypted — losslessly, and only when the file
-actually carries such metadata (clean files are left byte-for-byte untouched).
+Location + PII (GPS, device make/model/serial, lens, owner, host) is stripped
+**losslessly** and only when a file actually carries it (clean files are left
+byte-for-byte untouched). It happens at three points, so nothing leaks:
+
+- **on `adopt`** — dropped files are scrubbed immediately (local copies, before packing)
+- **on `pack`** — a final pass before encryption
+- **`node server.js scrub`** — sweep every local file in `media/` on demand
 
 ## media.json shape
 
@@ -109,7 +113,8 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 |---|---|
 | `node server.js` | serve gallery (`/`) + graph viewer (`/graph.html`) |
 | `node server.js resolve` | populate `media/` from the manifest |
-| `node server.js adopt` | register hand-dropped files in `media/<Album>/` as items |
+| `node server.js adopt` | register hand-dropped files in `media/<Album>/` as items (and scrub their PII) |
+| `node server.js scrub` | strip location/PII metadata from every local file in `media/` |
 | `node server.js pack [--all] [--no-adopt]` | adopt dropped files, scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
 | `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |
