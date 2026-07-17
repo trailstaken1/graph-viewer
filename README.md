@@ -44,6 +44,31 @@ git add media.json.age media-age .age-recipient key.age && git commit
 The server reads `media.json` fresh on every request, so editing it and adding
 files under `media/` shows up on refresh — no restart.
 
+### Adding media by URL
+
+Add a bare item — no id needed — and `setup`/`resolve` fills in the rest:
+
+```json
+{ "album": "Trip", "src": "https://host/photo.jpg" }
+```
+
+`resolve` assigns an `id`, makes `src` an array, derives a `name` from the URL,
+and downloads it.
+
+### Where bytes are stored (pack)
+
+`pack` decides per item whether this repo keeps its own encrypted copy:
+
+- **your own media** (no remote `src` — spliced or dropped in) → stored here
+- **`src` on another GitHub repo** → *leveraged*, not re-stored (that repo hosts it)
+- **`src` on a non-GitHub host** → stored here (those aren't trusted to stay up)
+- **`--all`** → store everything locally, GitHub included
+
+Every stored item also gets an **absolute** url recorded
+(`https://raw.githubusercontent.com/<owner>/<repo>/<branch>/media-age/<id>.age`,
+from `git remote` or `GV_RAW_BASE`), so the manifest is portable and other repos
+can reference this one's media.
+
 ## Privacy
 
 `pack` strips location + PII (GPS, device make/model/serial, owner, host) from
@@ -71,7 +96,7 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 |---|---|
 | `node server.js` | serve gallery (`/`) + graph viewer (`/graph.html`) |
 | `node server.js resolve` | populate `media/` from the manifest |
-| `node server.js pack [--all]` | scrub + encrypt new media, datestamp, re-encrypt manifest |
+| `node server.js pack [--all]` | scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
 | `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |
 
