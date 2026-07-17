@@ -6,14 +6,21 @@
   <title>Video Graph</title>
   <link rel="stylesheet" href="graph.css" />
   <style>
-    #nav { position: fixed; top: 12px; right: 16px; z-index: 20; }
+    #nav { position: fixed; top: 12px; right: 16px; z-index: 20; display: flex; gap: 8px; align-items: center; }
     #nav a { color: var(--dim); text-decoration: none; font: 12px/1 -apple-system, system-ui, sans-serif;
       background: rgba(28,28,37,0.8); border: 1px solid var(--line); border-radius: 7px; padding: 6px 12px; }
     #nav a:hover { color: var(--hot); border-color: var(--hot); }
+    #graph-switcher { font: 12px/1 -apple-system, system-ui, sans-serif; color: var(--text);
+      background: rgba(28,28,37,0.9); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; cursor: pointer; }
+    #graph-switcher:hover { border-color: var(--hot); }
+    #graph-switcher[hidden] { display: none; }
   </style>
 </head>
 <body>
-  <nav id="nav"><a href="/">← Gallery</a></nav>
+  <nav id="nav">
+    <select id="graph-switcher" title="Switch graph" hidden></select>
+    <a href="/">← Gallery</a>
+  </nav>
   <div id="app">
     <section id="graph-pane">
       <header class="pane-head">

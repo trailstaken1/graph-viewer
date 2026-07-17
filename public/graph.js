@@ -92,6 +92,26 @@
     document.getElementById('graph-title').textContent = names.length ? title : 'No graph defined';
     document.title = title;
 
+    // Switcher — shown only when there's more than one graph. Changing it
+    // reloads with ?graph=<name> so playback state resets cleanly.
+    const sw = document.getElementById('graph-switcher');
+    if (sw) {
+      if (names.length > 1) {
+        sw.innerHTML = '';
+        for (const n of names) {
+          const o = document.createElement('option');
+          o.value = n;
+          o.textContent = (graphs[n] && graphs[n].title) || n;
+          if (n === gname) o.selected = true;
+          sw.appendChild(o);
+        }
+        sw.hidden = false;
+        sw.onchange = () => { location.search = '?graph=' + encodeURIComponent(sw.value); };
+      } else {
+        sw.hidden = true;
+      }
+    }
+
     G.nodes = (g.nodes || []).map((n) => ({
       id: n.id, name: n.name || n.id, image: urlOf(n.item),
       x: 0, y: 0, vx: 0, vy: 0,
