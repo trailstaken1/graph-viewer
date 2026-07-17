@@ -73,6 +73,19 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 | `node server.js resolve` | populate `media/` from the manifest |
 | `node server.js pack [--all]` | scrub + encrypt new media, datestamp, re-encrypt manifest |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
+| `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |
+
+## Importing a library
+
+`import` turns the old download-script `library` structure into a manifest: each
+collection is an album, its cover `c` and files `f` become items whose `src`
+holds the URL(s), and an `s` field (string or array) is carried across as
+`additionalLinks` (always an array). It preserves the original URL handling
+(`https://` prepend, `/`-relative resolution) and de-duplicates the cover against
+the file list. `--check` HEAD-probes every URL and reports the dead ones (falling
+back to a ranged GET when a server rejects HEAD); `--drop-dead` removes them,
+otherwise they're flagged `"dead": true`. Then `node server.js resolve` downloads
+every live `src` into `media/`, and `./scripts/pack.sh` scrubs + encrypts.
 
 ## Video graph
 

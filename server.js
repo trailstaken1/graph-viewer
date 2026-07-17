@@ -147,8 +147,10 @@ if (cmd === 'resolve') {
   require('./lib/pack').pack({ all: process.argv.includes('--all') }).catch(die);
 } else if (cmd === 'splice' || cmd === 'build') {
   require('./lib/splice').splice(process.argv.slice(3));
+} else if (cmd === 'import') {
+  require('./lib/import-library').runImport(process.argv.slice(3)).catch(die);
 } else if (cmd && cmd !== 'serve') {
-  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …]');
+  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …]');
   process.exit(1);
 } else {
   serve();
