@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Video Graph</title>
+  <link rel="stylesheet" href="graph.css" />
+  <style>
+    #nav { position: fixed; top: 12px; right: 16px; z-index: 20; }
+    #nav a { color: var(--dim); text-decoration: none; font: 12px/1 -apple-system, system-ui, sans-serif;
+      background: rgba(28,28,37,0.8); border: 1px solid var(--line); border-radius: 7px; padding: 6px 12px; }
+    #nav a:hover { color: var(--hot); border-color: var(--hot); }
+  </style>
+</head>
+<body>
+  <nav id="nav"><a href="/">← Gallery</a></nav>
+  <div id="app">
+    <section id="graph-pane">
+      <header class="pane-head">
+        <h1 id="graph-title">Video Graph</h1>
+        <p class="hint">
+          <b>Click</b> to route there ·
+          <b>Double-click</b> to go there now ·
+          <b>⌘/Ctrl-click</b> to queue ·
+          <b>Click inside a loop</b> to repeat it<br />
+          <b>Drag</b> to pan · <b>Scroll</b> to zoom
+        </p>
+      </header>
+      <svg id="graph" role="img" aria-label="Video graph">
+        <g id="scene">
+          <g id="layer-loops"></g>
+          <g id="layer-edges"></g>
+          <g id="layer-nodes"></g>
+        </g>
+      </svg>
+    </section>
+
+    <section id="player-pane">
+      <div id="stage">
+        <video id="video-a" playsinline muted preload="auto"></video>
+        <video id="video-b" playsinline muted preload="auto"></video>
+        <img id="still" alt="" />
+        <div id="park-hint">Pick a direction</div>
+      </div>
+
+      <div id="now-playing">
+        <span id="np-from" class="np-node">—</span>
+        <span class="np-arrow">→</span>
+        <span id="np-to" class="np-node">—</span>
+        <span id="np-edge" class="np-edge"></span>
+      </div>
+
+      <div id="scrub"><div id="scrub-fill"></div></div>
+
+      <div id="controls">
+        <button id="btn-play" title="Play / pause">Pause</button>
+        <button id="btn-mute" title="Mute / unmute" class="muted">Unmute</button>
+        <button id="btn-loop" title="Repeat the current clip instead of moving on">Loop</button>
+        <button id="btn-skip" title="Skip to the next clip">Skip</button>
+        <button id="btn-clear" title="Clear the queue and any loop">Clear</button>
+        <button id="btn-fit" title="Fit the whole graph in view">Fit</button>
+        <div id="queue" aria-label="Queued clips"></div>
+      </div>
+    </section>
+  </div>
+
+  
+  <script src="graph.js"></script>
+</body>
+</html>

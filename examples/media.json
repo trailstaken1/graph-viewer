@@ -45,6 +45,54 @@
       "title": "Test loop",
       "date": "2026-07-17",
       "cover": true
+    },
+    {
+      "id": "ff0e0db4-724e-4a2b-9811-01dcc39e6014",
+      "name": "frame-000.jpg",
+      "title": "0:00",
+      "album": "Sequence"
+    },
+    {
+      "id": "560574cd-b63f-4b91-bd3a-4694589c84b2",
+      "name": "frame-005.jpg",
+      "title": "0:05",
+      "album": "Sequence"
+    },
+    {
+      "id": "8d5e90f0-e7c5-43e6-842d-a3490beca1a0",
+      "name": "frame-010.jpg",
+      "title": "0:10",
+      "album": "Sequence"
+    },
+    {
+      "id": "46d8c02b-94f9-400b-bf39-711eb26be34d",
+      "name": "frame-020.jpg",
+      "title": "0:20",
+      "album": "Sequence"
+    },
+    {
+      "id": "f3c32347-e2c5-455a-814d-7eeac7a02d38",
+      "name": "clip-000-005.mp4",
+      "title": "0:00–0:05",
+      "album": "Sequence"
+    },
+    {
+      "id": "8736d26e-0013-4edb-ae87-08c84931223e",
+      "name": "clip-005-010.mp4",
+      "title": "0:05–0:10",
+      "album": "Sequence"
+    },
+    {
+      "id": "a7e78aa2-8d02-408c-92ff-2cf28c7539c8",
+      "name": "clip-010-015.mp4",
+      "title": "Loop 0:10",
+      "album": "Sequence"
+    },
+    {
+      "id": "bba9d3cb-d662-4d4c-ba81-7c4eda588498",
+      "name": "clip-015-020.mp4",
+      "title": "0:15–0:20",
+      "album": "Sequence"
     }
   ],
   "albums": {
@@ -58,5 +106,61 @@
       "title": "Motion"
     }
   },
-  "graphs": {}
+  "graphs": {
+    "main": {
+      "title": "Sequence",
+      "nodes": [
+        {
+          "id": "n0",
+          "item": "ff0e0db4-724e-4a2b-9811-01dcc39e6014",
+          "name": "0:00"
+        },
+        {
+          "id": "n5",
+          "item": "560574cd-b63f-4b91-bd3a-4694589c84b2",
+          "name": "0:05"
+        },
+        {
+          "id": "n10",
+          "item": "8d5e90f0-e7c5-43e6-842d-a3490beca1a0",
+          "name": "0:10"
+        },
+        {
+          "id": "n20",
+          "item": "46d8c02b-94f9-400b-bf39-711eb26be34d",
+          "name": "0:20"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "n0",
+          "to": "n5",
+          "item": "f3c32347-e2c5-455a-814d-7eeac7a02d38",
+          "name": "0:00–0:05"
+        },
+        {
+          "id": "e2",
+          "from": "n5",
+          "to": "n10",
+          "item": "8736d26e-0013-4edb-ae87-08c84931223e",
+          "name": "0:05–0:10"
+        },
+        {
+          "id": "e3",
+          "from": "n10",
+          "to": "n10",
+          "item": "a7e78aa2-8d02-408c-92ff-2cf28c7539c8",
+          "name": "Loop 0:10"
+        },
+        {
+          "id": "e4",
+          "from": "n10",
+          "to": "n20",
+          "item": "bba9d3cb-d662-4d4c-ba81-7c4eda588498",
+          "name": "0:15–0:20"
+        }
+      ]
+    }
+  }
 }

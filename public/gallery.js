@@ -24,6 +24,9 @@ async function load() {
   catch { data = { items: [] }; }
   ITEMS = data.items || [];
   ALBUM_META = data.albums || {};
+  // Surface the graph viewer only when a graph is defined.
+  const hasGraph = data.graphs && Object.keys(data.graphs).length > 0;
+  document.getElementById('graph-link').hidden = !hasGraph;
   render();
 }
 let ALBUM_META = {};

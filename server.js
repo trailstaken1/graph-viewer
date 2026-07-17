@@ -146,12 +146,9 @@ if (cmd === 'resolve') {
 } else if (cmd === 'pack') {
   require('./lib/pack').pack({ all: process.argv.includes('--all') }).catch(die);
 } else if (cmd === 'splice' || cmd === 'build') {
-  // The video splicer still lives in server.legacy.js while it's ported to emit
-  // manifest items + a graph. For now:  node server.legacy.js build <video> …
-  console.error('splicer not yet ported to the new manifest. For now run:\n  node server.legacy.js build <video> [--interval 5] [--loop a-b]');
-  process.exit(1);
+  require('./lib/splice').splice(process.argv.slice(3));
 } else if (cmd && cmd !== 'serve') {
-  console.error('usage: node server.js [serve|resolve|pack [--all]]');
+  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …]');
   process.exit(1);
 } else {
   serve();

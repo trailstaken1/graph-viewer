@@ -31,8 +31,14 @@ html, body {
 #tabs button.on { color: var(--hot); border-color: var(--hot-soft); background: rgba(255,45,149,0.1); }
 #crumb { display: flex; align-items: center; gap: 10px; }
 #crumb-name { font-weight: 600; color: var(--hot); }
+#graph-link {
+  margin-left: auto; color: var(--dim); text-decoration: none; font-size: 13px;
+  border: 1px solid var(--line); border-radius: 7px; padding: 5px 12px; transition: all .15s ease;
+}
+#graph-link:hover { color: var(--hot); border-color: var(--hot); }
+#graph-link[hidden] + #search { margin-left: auto; }
 #search {
-  margin-left: auto; width: 240px; max-width: 40vw;
+  width: 240px; max-width: 40vw;
   background: #1a1a22; color: var(--text); border: 1px solid var(--line); border-radius: 8px;
   padding: 7px 12px; font: inherit; font-size: 13px;
 }

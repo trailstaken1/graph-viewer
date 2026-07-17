@@ -69,9 +69,19 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 
 | command | what |
 |---|---|
-| `node server.js` | serve gallery + graph |
+| `node server.js` | serve gallery (`/`) + graph viewer (`/graph.html`) |
 | `node server.js resolve` | populate `media/` from the manifest |
 | `node server.js pack [--all]` | scrub + encrypt new media, datestamp, re-encrypt manifest |
+| `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
+
+## Video graph
+
+`splice` cuts a video on a grid: a frame at each cut becomes a node, each segment
+a clip on the edge between two nodes. `--loop a-b` makes the b-frame the a-frame
+(a self-loop). The graph viewer (`/graph.html`, linked from the gallery when a
+graph exists) plays it back — autoplay picks the shortest loop home, click a node
+or edge to route there, double-click to jump, ⌘-click to queue, and an edge with
+no clip is a jump cut. After splicing, run `./scripts/pack.sh`.
 
 `--all` also pulls down items that live only remotely and stores a local
 encrypted copy.
