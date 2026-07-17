@@ -1,0 +1,84 @@
+:root {
+  --bg: #0b0b0f;
+  --panel: #121218;
+  --line: #23232e;
+  --text: #e9e9f0;
+  --dim: #6b6b7b;
+  --hot: #ff2d95;
+  --hot-soft: rgba(255, 45, 149, 0.5);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--text);
+  font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+
+/* ---------- top bar ---------- */
+#bar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px 20px; background: rgba(11,11,15,0.85);
+  backdrop-filter: blur(10px); border-bottom: 1px solid var(--line);
+}
+#title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+#tabs { display: flex; gap: 4px; }
+#tabs button, #back {
+  background: transparent; color: var(--dim); border: 1px solid transparent; border-radius: 7px;
+  padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; transition: all .15s ease;
+}
+#tabs button:hover, #back:hover { color: var(--text); background: #1c1c25; }
+#tabs button.on { color: var(--hot); border-color: var(--hot-soft); background: rgba(255,45,149,0.1); }
+#crumb { display: flex; align-items: center; gap: 10px; }
+#crumb-name { font-weight: 600; color: var(--hot); }
+#search {
+  margin-left: auto; width: 240px; max-width: 40vw;
+  background: #1a1a22; color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 12px; font: inherit; font-size: 13px;
+}
+#search:focus { outline: none; border-color: var(--hot-soft); }
+
+/* ---------- stage ---------- */
+#stage { padding: 20px; }
+
+/* album grid */
+.albums { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+.album-card { cursor: pointer; border-radius: 12px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); transition: transform .15s ease, border-color .15s ease; }
+.album-card:hover { transform: translateY(-3px); border-color: var(--hot-soft); }
+.album-cover { aspect-ratio: 4/3; background: #000 center/cover no-repeat; display: block; }
+.album-cover.empty { display: flex; align-items: center; justify-content: center; color: var(--dim); font-size: 28px; }
+.album-meta { padding: 10px 12px; }
+.album-name { font-weight: 600; }
+.album-count { color: var(--dim); font-size: 12px; margin-top: 2px; }
+
+/* masonry (pinterest columns) */
+.masonry { column-width: 250px; column-gap: 14px; }
+.tile { break-inside: avoid; margin: 0 0 14px; position: relative; border-radius: 10px; overflow: hidden; background: var(--panel); cursor: zoom-in; display: block; }
+.tile img, .tile video { width: 100%; display: block; }
+.tile .badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 999px; padding: 2px 8px; font-size: 11px; }
+.tile .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px; font-size: 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.75)); opacity: 0; transition: opacity .15s ease; }
+.tile:hover .cap { opacity: 1; }
+.tile .cap .album { color: var(--hot); font-size: 11px; }
+
+/* empty state */
+#empty { padding: 60px 20px; text-align: center; color: var(--dim); }
+#empty .hint { font-size: 13px; margin-top: 8px; }
+code { background: #1c1c25; padding: 1px 6px; border-radius: 4px; color: #cfcfe0; }
+
+/* ---------- lightbox ---------- */
+#lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.94);
+  display: flex; align-items: center; justify-content: center; }
+#lb-media { max-width: 92vw; max-height: 86vh; display: flex; }
+#lb-media img, #lb-media video { max-width: 92vw; max-height: 86vh; object-fit: contain; }
+#lb-caption { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: var(--text); font-size: 13px; }
+#lb-caption .album { color: var(--hot); }
+#lb-close, #lb-prev, #lb-next {
+  position: absolute; background: rgba(255,255,255,0.06); color: #fff; border: none; cursor: pointer;
+  border-radius: 999px; width: 48px; height: 48px; font-size: 22px; transition: background .15s ease;
+}
+#lb-close:hover, #lb-prev:hover, #lb-next:hover { background: var(--hot); }
+#lb-close { top: 20px; right: 20px; font-size: 18px; }
+#lb-prev { left: 20px; top: 50%; transform: translateY(-50%); }
+#lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
+[hidden] { display: none !important; }

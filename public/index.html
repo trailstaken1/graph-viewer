@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gallery</title>
+  <link rel="stylesheet" href="gallery.css" />
+</head>
+<body>
+  <header id="bar">
+    <h1 id="title">Gallery</h1>
+    <nav id="tabs">
+      <button data-view="albums" class="on">Albums</button>
+      <button data-view="all">All</button>
+    </nav>
+    <div id="crumb" hidden><button id="back">← Albums</button><span id="crumb-name"></span></div>
+    <input id="search" type="search" placeholder="Search album or file…" autocomplete="off" />
+  </header>
+
+  <main id="stage"></main>
+
+  <div id="empty" hidden>
+    <p>No media yet.</p>
+    <p class="hint">Add items to <code>media.json</code> and files to <code>media/</code>, then refresh.
+       On a fresh clone, run <code>./scripts/setup.sh</code> first.</p>
+  </div>
+
+  <div id="lightbox" hidden>
+    <button id="lb-close" title="Close (Esc)">✕</button>
+    <button id="lb-prev" title="Previous (←)">‹</button>
+    <button id="lb-next" title="Next (→)">›</button>
+    <div id="lb-media"></div>
+    <div id="lb-caption"></div>
+  </div>
+
+  <script src="gallery.js"></script>
+</body>
+</html>

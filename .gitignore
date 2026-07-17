@@ -1,0 +1,44 @@
+# ── Encryption model ───────────────────────────────────────────────────────
+# Committed  : media.json.age, media-age/<uuid>.age, key.age (passphrase-wrapped
+#              private key), .age-recipient (public key, not secret).
+# Never commit: the plaintext key, the plaintext manifest, or decrypted media.
+
+key.txt                # decrypted private identity — the secret that unlocks everything
+*.identity
+media.json             # decrypted manifest
+media/                 # decrypted working copies of all media
+
+# ── Raw media (belt and braces) ─────────────────────────────────────────────
+# media/ is already ignored, but ignore stray plaintext media anywhere too, so a
+# file dropped at the repo root can never be committed unencrypted. A name
+# ending in .age does not match these, so the encrypted copies still commit.
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.bmp
+*.tif
+*.tiff
+*.heic
+*.heif
+*.avif
+*.mov
+*.mp4
+*.m4v
+*.webm
+*.avi
+*.mkv
+*.mpg
+*.mpeg
+*.wmv
+*.flv
+
+# ── Secrets / local-only ────────────────────────────────────────────────────
+.catbox-userhash
+
+# ── macOS / editor cruft ────────────────────────────────────────────────────
+.DS_Store
+*.swp
+*~
+node_modules/
