@@ -81,13 +81,14 @@ function render() {
 
   if (showAlbums) renderAlbums();
   else if (typeof view === 'object' && !query) renderMasonry(visibleItems()); // drilled into one album
-  else renderGrouped(visibleItems());                                          // "All" / search → grouped
+  else renderCompact(visibleItems());                                          // "All" / search
 }
 
-// Grouped masonry: an album header then that album's tiles, albums A→Z, names
-// A→Z within. Tiles index into a single flat list so the lightbox arrows still
-// step across every visible image, not just one album.
-function renderGrouped(items) {
+// One compact pinterest masonry across everything, albums A→Z with internal
+// order preserved. The first tile of each album carries the album title as a
+// banner — compact, but still delineated. Tiles index into one flat list so the
+// lightbox arrows step across every visible image.
+function renderCompact(items) {
   const groups = new Map();
   for (const it of items) {
     const a = it.album || '';
@@ -95,23 +96,28 @@ function renderGrouped(items) {
     groups.get(a).push(it);
   }
   const albums = [...groups.keys()].sort(byAlbum);
-  // albums A→Z, but internal order within each album is preserved (matches media.json)
   const flat = [];
-  for (const a of albums) flat.push(...groups.get(a));
-
-  let gi = 0;
+  const heads = new Set();                 // items that open a new album
   for (const a of albums) {
-    const header = document.createElement('h2');
-    header.className = 'album-header';
-    header.textContent = albumLabel(a);
-    header.addEventListener('click', () => { view = { album: a }; render(); });
-    stage.appendChild(header);
-
-    const wrap = document.createElement('div');
-    wrap.className = 'masonry';
-    for (const it of groups.get(a)) { wrap.appendChild(tile(it, gi, flat)); gi++; }
-    stage.appendChild(wrap);
+    const arr = groups.get(a);
+    if (arr.length) heads.add(arr[0]);
+    flat.push(...arr);
   }
+
+  const wrap = document.createElement('div');
+  wrap.className = 'masonry';
+  flat.forEach((it, i) => {
+    const t = tile(it, i, flat);
+    if (heads.has(it)) {
+      const tag = document.createElement('div');
+      tag.className = 'album-tag';
+      tag.textContent = albumLabel(it.album);
+      tag.addEventListener('click', (e) => { e.stopPropagation(); view = { album: it.album || '' }; render(); });
+      t.appendChild(tag);
+    }
+    wrap.appendChild(t);
+  });
+  stage.appendChild(wrap);
 }
 
 function renderAlbums() {
@@ -164,8 +170,9 @@ function tile(it, index, list) {
 
   const cap = document.createElement('div');
   cap.className = 'cap';
-  cap.innerHTML = `<div>${escapeHtml(it.title || it.name)}</div>` +
-    (it.album ? `<div class="album">${escapeHtml(it.album)}</div>` : '');
+  cap.innerHTML = `<div class="cap-title">${escapeHtml(it.title || it.name)}</div>` +
+    (it.album ? `<div class="album">${escapeHtml(it.album)}</div>` : '') +
+    (it.prompt ? `<div class="prompt">${escapeHtml(it.prompt)}</div>` : '');
   el.appendChild(cap);
 
   el.addEventListener('click', () => openLightbox(list, index));
@@ -220,17 +227,19 @@ function showLightbox() {
     img.src = it.url; img.alt = it.title || it.name; img.draggable = false;
     lbMedia.appendChild(img);
   }
-  lbCaption.innerHTML = `${escapeHtml(it.title || it.name)}` +
+  lbCaption.innerHTML =
+    `<div class="lb-title">${escapeHtml(it.title || it.name)}` +
     (it.album ? ` · <span class="album">${escapeHtml(it.album)}</span>` : '') +
     (it.date ? ` · ${it.date}` : '') +
-    ` · ${lbIndex + 1}/${lbList.length}`;
+    ` · ${lbIndex + 1}/${lbList.length}</div>` +
+    (it.prompt ? `<div class="lb-prompt">${escapeHtml(it.prompt)}</div>` : '');
 }
 
 // Reveal controls + cursor on movement, hide them after a beat of stillness.
 function wake() {
   lb.classList.remove('idle');
   clearTimeout(idleTimer);
-  idleTimer = setTimeout(() => { if (!lb.hidden) lb.classList.add('idle'); }, 2200);
+  idleTimer = setTimeout(() => { if (!lb.hidden) lb.classList.add('idle'); }, 1100);
 }
 
 /* ---- image zoom + pan (pinch, wheel, double-click) ---- */

@@ -57,14 +57,14 @@ html, body {
 .album-name { font-weight: 600; }
 .album-count { color: var(--dim); font-size: 12px; margin-top: 2px; }
 
-/* album section header in the grouped "All" view */
-.album-header {
-  margin: 26px 0 12px; font-size: 14px; font-weight: 600; letter-spacing: 0.03em;
-  color: var(--text); cursor: pointer; display: inline-block;
-  border-bottom: 2px solid transparent; transition: border-color .15s ease, color .15s ease;
+/* album title banner on the first tile of each album in the compact "All" view */
+.tile .album-tag {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 2; cursor: pointer;
+  padding: 9px 11px 22px; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; color: #fff;
+  background: linear-gradient(rgba(0,0,0,0.72), transparent);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 }
-.album-header:hover { color: var(--hot); border-color: var(--hot); }
-.album-header:first-child { margin-top: 4px; }
+.tile .album-tag:hover { color: var(--hot); }
 
 /* masonry (pinterest columns) */
 .masonry { column-width: 250px; column-gap: 14px; }
@@ -75,6 +75,10 @@ html, body {
   background: linear-gradient(transparent, rgba(0,0,0,0.75)); opacity: 0; transition: opacity .15s ease; }
 .tile:hover .cap { opacity: 1; }
 .tile .cap .album { color: var(--hot); font-size: 11px; }
+.tile .cap .prompt {
+  margin-top: 4px; font-size: 11px; color: #cfcfe0; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+}
 
 /* empty state */
 #empty { padding: 60px 20px; text-align: center; color: var(--dim); }
@@ -85,7 +89,7 @@ code { background: #1c1c25; padding: 1px 6px; border-radius: 4px; color: #cfcfe0
 #lightbox { position: fixed; inset: 0; z-index: 100; background: #000;
   display: flex; align-items: center; justify-content: center; }
 /* fill the screen — the media contains within the full viewport */
-#lb-media { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#lb-media { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 0; }
 /* width+height:100% (not just max-*) so a SMALL image scales UP to fill; contain
    keeps aspect, so one axis always hits 100vw or 100vh and only the other axis
    can letterbox — never black on all four sides. */
@@ -94,11 +98,17 @@ code { background: #1c1c25; padding: 1px 6px; border-radius: 4px; color: #cfcfe0
 #lightbox.zoomed #lb-media img { cursor: grab; }
 #lightbox.zoomed #lb-media img:active { cursor: grabbing; }
 
-#lb-caption { position: absolute; bottom: 18px; left: 0; right: 0; text-align: center; color: var(--text);
+/* caption + buttons must sit ABOVE #lb-media: it's a 100vw×100vh flex item whose
+   transparent letterbox area would otherwise cover (and swallow clicks on) them. */
+#lb-caption { position: absolute; bottom: 18px; left: 0; right: 0; z-index: 4; text-align: center; color: var(--text);
   font-size: 13px; text-shadow: 0 1px 6px #000; pointer-events: none; }
 #lb-caption .album { color: var(--hot); }
+#lb-caption .lb-prompt {
+  margin: 6px auto 0; max-width: 72vw; max-height: 20vh; overflow-y: auto;
+  font-size: 12px; line-height: 1.4; color: #d6d6e2; pointer-events: auto;
+}
 #lb-close, #lb-prev, #lb-next {
-  position: absolute; background: rgba(255,255,255,0.08); color: #fff; border: none; cursor: pointer;
+  position: absolute; z-index: 5; background: rgba(255,255,255,0.08); color: #fff; border: none; cursor: pointer;
   border-radius: 999px; width: 48px; height: 48px; font-size: 22px; transition: background .15s ease, opacity .25s ease;
 }
 #lb-close:hover, #lb-prev:hover, #lb-next:hover { background: var(--hot); }

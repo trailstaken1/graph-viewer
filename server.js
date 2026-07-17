@@ -40,6 +40,7 @@ function manifestForClient() {
       album: it.album || '',
       date: it.date || null,
       cover: !!it.cover,
+      prompt: it.prompt || null,
       type: M.typeOf(it),
       url: M.workingUrl(it),
       src: it.src || [],
