@@ -100,6 +100,16 @@ function serve() {
   const HOST = '127.0.0.1';
   const PORT = Number(process.env.PORT) || 8080;
 
+  // Register (and scrub + measure) any hand-dropped files at startup, so
+  // `node server.js` on freshly-dropped media just shows them. Only when the
+  // manifest is already decrypted — never on an un-set-up clone, so we can't
+  // start from an empty manifest and clobber the committed one. It's a cheap
+  // no-op when nothing new was dropped. Files dropped WHILE running need a
+  // restart (or `node server.js adopt`).
+  if (fs.existsSync(M.MANIFEST)) {
+    try { require('./lib/adopt').adoptLocal(); } catch (e) { console.warn('  startup adopt skipped:', e.message); }
+  }
+
   const server = http.createServer((req, res) => {
     let pathname;
     try { pathname = decodeURIComponent(url.parse(req.url).pathname); }
