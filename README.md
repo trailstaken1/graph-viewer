@@ -61,11 +61,12 @@ Make a folder under `media/` and drop images/videos into it — the folder name 
 the album (nesting allowed, e.g. `media/Trips/Italy/`). Then:
 
 ```sh
-node server.js adopt      # register anything not yet in the manifest
+./scripts/pack.sh         # adopts new files automatically, then scrubs + encrypts
 ```
 
-`setup.sh` runs `adopt` for you. It only adds (idempotent, safe to re-run), then
-`./scripts/pack.sh` scrubs + encrypts the new files.
+`pack` (and `setup.sh`) run `adopt` for you, so dropping files then packing just
+works. To register without packing, `node server.js adopt` (add-only, idempotent);
+`--dry-run` lists what would be added. Pack with `--no-adopt` to skip the scan.
 
 ### Where bytes are stored (pack)
 
@@ -109,7 +110,7 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 | `node server.js` | serve gallery (`/`) + graph viewer (`/graph.html`) |
 | `node server.js resolve` | populate `media/` from the manifest |
 | `node server.js adopt` | register hand-dropped files in `media/<Album>/` as items |
-| `node server.js pack [--all]` | scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
+| `node server.js pack [--all] [--no-adopt]` | adopt dropped files, scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
 | `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |
 

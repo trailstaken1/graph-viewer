@@ -144,7 +144,7 @@ const cmd = process.argv[2];
 if (cmd === 'resolve') {
   require('./lib/resolve').resolveAll({ force: process.argv.includes('--force') }).catch(die);
 } else if (cmd === 'pack') {
-  require('./lib/pack').pack({ all: process.argv.includes('--all') }).catch(die);
+  require('./lib/pack').pack({ all: process.argv.includes('--all'), adopt: !process.argv.includes('--no-adopt') }).catch(die);
 } else if (cmd === 'splice' || cmd === 'build') {
   require('./lib/splice').splice(process.argv.slice(3));
 } else if (cmd === 'import') {
