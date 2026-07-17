@@ -17,6 +17,9 @@ let query = '';
 
 const isVideo = (it) => it.type === 'video';
 const albumLabel = (a) => a || 'Ungrouped';
+// One album ordering used everywhere (and mirrored in the manifest): natural,
+// case-insensitive, by the raw album name so it matches media.json's order.
+const byAlbum = (x, y) => String(x || '').localeCompare(String(y || ''), undefined, { numeric: true, sensitivity: 'base' });
 
 async function load() {
   let data;
@@ -36,7 +39,7 @@ let ALBUM_META = {};
 function albumsInOrder() {
   const names = [];
   for (const it of ITEMS) { const a = it.album || ''; if (!names.includes(a)) names.push(a); }
-  return names.sort((x, y) => albumLabel(x).localeCompare(albumLabel(y)));
+  return names.sort(byAlbum);
 }
 
 function coverFor(album) {
@@ -57,8 +60,8 @@ function visibleItems() {
       (it.name || '').toLowerCase().includes(q) ||
       (it.title || '').toLowerCase().includes(q));
   }
-  return [...list].sort((a, b) =>
-    albumLabel(a.album).localeCompare(albumLabel(b.album)) || (a.name || '').localeCompare(b.name || ''));
+  // Preserve manifest order (which is already album-sorted, internal order kept).
+  return list;
 }
 
 /* --------------------------------------------------------------- rendering */
@@ -77,7 +80,38 @@ function render() {
   emptyEl.hidden = true;
 
   if (showAlbums) renderAlbums();
-  else renderMasonry(visibleItems());
+  else if (typeof view === 'object' && !query) renderMasonry(visibleItems()); // drilled into one album
+  else renderGrouped(visibleItems());                                          // "All" / search → grouped
+}
+
+// Grouped masonry: an album header then that album's tiles, albums A→Z, names
+// A→Z within. Tiles index into a single flat list so the lightbox arrows still
+// step across every visible image, not just one album.
+function renderGrouped(items) {
+  const groups = new Map();
+  for (const it of items) {
+    const a = it.album || '';
+    if (!groups.has(a)) groups.set(a, []);
+    groups.get(a).push(it);
+  }
+  const albums = [...groups.keys()].sort(byAlbum);
+  // albums A→Z, but internal order within each album is preserved (matches media.json)
+  const flat = [];
+  for (const a of albums) flat.push(...groups.get(a));
+
+  let gi = 0;
+  for (const a of albums) {
+    const header = document.createElement('h2');
+    header.className = 'album-header';
+    header.textContent = albumLabel(a);
+    header.addEventListener('click', () => { view = { album: a }; render(); });
+    stage.appendChild(header);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'masonry';
+    for (const it of groups.get(a)) { wrap.appendChild(tile(it, gi, flat)); gi++; }
+    stage.appendChild(wrap);
+  }
 }
 
 function renderAlbums() {
@@ -153,8 +187,8 @@ function openLightbox(list, index) {
   lbList = list; lbIndex = index;
   lb.hidden = false;
   showLightbox();
-  // Real fullscreen — maxes out screen real estate, hides browser chrome.
-  if (lb.requestFullscreen) lb.requestFullscreen().catch(() => {});
+  // Fill the browser viewport via the fixed overlay only — deliberately NOT the
+  // Fullscreen API, so macOS doesn't shove it into a new Space / OS fullscreen.
   wake();
 }
 function closeLightbox() {
@@ -163,7 +197,6 @@ function closeLightbox() {
   lbMedia.innerHTML = '';
   clearTimeout(idleTimer);
   lb.classList.remove('idle');
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
 }
 function step(d) { lbIndex = (lbIndex + d + lbList.length) % lbList.length; showLightbox(); wake(); }
 
@@ -265,8 +298,6 @@ lb.addEventListener('click', (e) => {
   if (zoom.scale > 1.01) return;
   if (e.target === lb || e.target === lbMedia) closeLightbox();
 });
-// Esc out of fullscreen (browser default) should also close the lightbox
-document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && !lb.hidden) closeLightbox(); });
 
 document.addEventListener('keydown', (e) => {
   if (lb.hidden) return;
