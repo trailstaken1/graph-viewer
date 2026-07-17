@@ -55,6 +55,18 @@ Add a bare item — no id needed — and `setup`/`resolve` fills in the rest:
 `resolve` assigns an `id`, makes `src` an array, derives a `name` from the URL,
 and downloads it.
 
+### Adding media by dropping files
+
+Make a folder under `media/` and drop images/videos into it — the folder name is
+the album (nesting allowed, e.g. `media/Trips/Italy/`). Then:
+
+```sh
+node server.js adopt      # register anything not yet in the manifest
+```
+
+`setup.sh` runs `adopt` for you. It only adds (idempotent, safe to re-run), then
+`./scripts/pack.sh` scrubs + encrypts the new files.
+
 ### Where bytes are stored (pack)
 
 `pack` decides per item whether this repo keeps its own encrypted copy:
@@ -96,6 +108,7 @@ actually carries such metadata (clean files are left byte-for-byte untouched).
 |---|---|
 | `node server.js` | serve gallery (`/`) + graph viewer (`/graph.html`) |
 | `node server.js resolve` | populate `media/` from the manifest |
+| `node server.js adopt` | register hand-dropped files in `media/<Album>/` as items |
 | `node server.js pack [--all]` | scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
 | `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |

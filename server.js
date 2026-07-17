@@ -149,8 +149,10 @@ if (cmd === 'resolve') {
   require('./lib/splice').splice(process.argv.slice(3));
 } else if (cmd === 'import') {
   require('./lib/import-library').runImport(process.argv.slice(3)).catch(die);
+} else if (cmd === 'adopt') {
+  require('./lib/adopt').adoptLocal();
 } else if (cmd && cmd !== 'serve') {
-  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …]');
+  console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …|adopt]');
   process.exit(1);
 } else {
   serve();

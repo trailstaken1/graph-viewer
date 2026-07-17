@@ -33,5 +33,9 @@ fi
 echo "resolving media…"
 node server.js resolve
 
+# 4. Adopt any files you've dropped into media/<Album>/ that aren't in the manifest.
+node server.js adopt
+
 echo
 echo "Ready. Start the app with:  node server.js"
+echo "(dropped files are now in the manifest — run ./scripts/pack.sh to encrypt them for committing)"
