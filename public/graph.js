@@ -1097,8 +1097,17 @@
       const sx = ev.clientX - r.left;
       const sy = ev.clientY - r.top;
 
+      // Normalise to pixels: some inputs report deltaY in lines (deltaMode 1) or
+      // pages (2) with tiny magnitudes, which would make the zoom imperceptible;
+      // trackpads report pixels but with large momentum bursts, which would make
+      // it jumpy. Normalise, then cap, so one factor works for mouse and trackpad.
+      const unit = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? r.height : 1;
+      let delta = ev.deltaY * unit;
+      if (!delta) return;
+      delta = Math.max(-60, Math.min(60, delta));
+
       const k0 = view.k;
-      const k1 = Math.min(4, Math.max(0.15, k0 * Math.exp(-ev.deltaY * 0.0015)));
+      const k1 = Math.min(4, Math.max(0.15, k0 * Math.exp(-delta * 0.0025)));
       if (k1 === k0) return;
       autoFit = false;                        // you are driving the camera now
 
