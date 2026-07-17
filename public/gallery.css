@@ -77,7 +77,10 @@ code { background: #1c1c25; padding: 1px 6px; border-radius: 4px; color: #cfcfe0
   display: flex; align-items: center; justify-content: center; }
 /* fill the screen — the media contains within the full viewport */
 #lb-media { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-#lb-media img, #lb-media video { max-width: 100vw; max-height: 100vh; object-fit: contain; }
+/* width+height:100% (not just max-*) so a SMALL image scales UP to fill; contain
+   keeps aspect, so one axis always hits 100vw or 100vh and only the other axis
+   can letterbox — never black on all four sides. */
+#lb-media img, #lb-media video { width: 100%; height: 100%; object-fit: contain; }
 #lb-media img { cursor: zoom-in; will-change: transform; -webkit-user-drag: none; user-select: none; }
 #lightbox.zoomed #lb-media img { cursor: grab; }
 #lightbox.zoomed #lb-media img:active { cursor: grabbing; }
