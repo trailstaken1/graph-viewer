@@ -84,7 +84,10 @@ holds the URL(s), and an `s` field (string or array) is carried across as
 (`https://` prepend, `/`-relative resolution) and de-duplicates the cover against
 the file list. `--check` HEAD-probes every URL and reports the dead ones (falling
 back to a ranged GET when a server rejects HEAD); `--drop-dead` removes them,
-otherwise they're flagged `"dead": true`. Then `node server.js resolve` downloads
+otherwise they're flagged `"dead": true`. The probe is **per-host polite**: at
+most `--per-host` (default 4) requests in flight to any one domain, `--concurrency`
+(default 16) overall, with an optional `--delay` ms between requests to the same
+host — so a single CDN is never hammered. Then `node server.js resolve` downloads
 every live `src` into `media/`, and `./scripts/pack.sh` scrubs + encrypts.
 
 ## Video graph
