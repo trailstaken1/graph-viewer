@@ -1,14 +1,20 @@
-# ── Encryption model ───────────────────────────────────────────────────────
-# Committed  : media.json.age, media-age/<uuid>.age, key.age (passphrase-wrapped
+# ── Encryption model ─────────────────────────────────────────────────────────
+# Committed:   media.json.age, media-age/<uuid>.age, key.age (passphrase-wrapped
 #              private key), .age-recipient (public key, not secret).
 # Never commit: the plaintext key, the plaintext manifest, or decrypted media.
+#
+# NOTE: gitignore has NO inline comments — anything after a pattern on the same
+# line becomes part of the pattern. Keep every comment on its own line.
 
-key.txt                # decrypted private identity — the secret that unlocks everything
+# the decrypted private identity — the secret that unlocks everything
+key.txt
 *.identity
-media.json             # decrypted manifest
-media/                 # decrypted working copies of all media
+# the decrypted manifest
+media.json
+# decrypted working copies of all media
+media/
 
-# ── Raw media (belt and braces) ─────────────────────────────────────────────
+# ── Raw media (belt and braces) ──────────────────────────────────────────────
 # media/ is already ignored, but ignore stray plaintext media anywhere too, so a
 # file dropped at the repo root can never be committed unencrypted. A name
 # ending in .age does not match these, so the encrypted copies still commit.
@@ -34,10 +40,16 @@ media/                 # decrypted working copies of all media
 *.wmv
 *.flv
 
-# ── Secrets / local-only ────────────────────────────────────────────────────
+# ── Example library (deliberately public, unencrypted samples) ───────────────
+# Re-include everything under examples/ so the demo media commits despite the
+# media-extension rules above. These are generated test patterns — no PII.
+!examples/
+!examples/**
+
+# ── Secrets / local-only ─────────────────────────────────────────────────────
 .catbox-userhash
 
-# ── macOS / editor cruft ────────────────────────────────────────────────────
+# ── macOS / editor cruft ─────────────────────────────────────────────────────
 .DS_Store
 *.swp
 *~

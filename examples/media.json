@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "137827a8-af25-4352-8302-4ada46551595",
+      "name": "forest.png",
+      "album": "Nature",
+      "title": "Forest canopy",
+      "date": "2026-07-17",
+      "cover": true
+    },
+    {
+      "id": "cb6dd654-1e3a-44e8-a2bb-c4c825465a39",
+      "name": "ocean.png",
+      "album": "Nature",
+      "title": "Open ocean",
+      "date": "2026-07-17"
+    },
+    {
+      "id": "49ea037f-29ad-4488-8bd9-8dbfb155bf8d",
+      "name": "mountain.png",
+      "album": "Nature",
+      "title": "Mountain dawn",
+      "date": "2026-07-17"
+    },
+    {
+      "id": "c87a56e8-c083-451d-9e1e-af1ce427c2f0",
+      "name": "skyline.png",
+      "album": "City",
+      "title": "Skyline at dusk",
+      "date": "2026-07-17",
+      "cover": true
+    },
+    {
+      "id": "2d569199-cf47-4e45-9d81-99ffd2ff8b0e",
+      "name": "street.png",
+      "album": "City",
+      "title": "Neon street",
+      "date": "2026-07-17"
+    },
+    {
+      "id": "0296eadf-79d4-48c8-bf0d-7e81ae68a071",
+      "name": "loop.mp4",
+      "album": "Motion",
+      "title": "Test loop",
+      "date": "2026-07-17",
+      "cover": true
+    }
+  ],
+  "albums": {
+    "Nature": {
+      "title": "Nature"
+    },
+    "City": {
+      "title": "City"
+    },
+    "Motion": {
+      "title": "Motion"
+    }
+  },
+  "graphs": {}
+}

@@ -12,6 +12,15 @@ Anyone who clones the repo and knows the passphrase can reconstruct everything;
 anyone without it sees only ciphertext. Media can also live in another repo or
 any public URL — `src[]` on each item lists where its bytes can be fetched.
 
+## Try it (no setup)
+
+```sh
+./scripts/demo.sh          # http://127.0.0.1:8080 — bundled sample library
+```
+
+Runs against `examples/` (generated sample media, no encryption). Doesn't touch
+your real `media/` or `media.json`.
+
 ## One-time setup (owner)
 
 ```sh
