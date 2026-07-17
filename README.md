@@ -115,6 +115,7 @@ byte-for-byte untouched). It happens at three points, so nothing leaks:
 | `node server.js resolve` | populate `media/` from the manifest |
 | `node server.js adopt` | register hand-dropped files in `media/<Album>/` as items (and scrub their PII) |
 | `node server.js scrub` | strip location/PII metadata from every local file in `media/` |
+| `node server.js dims` | record pixel w/h on items (so the gallery masonry lays out instantly) |
 | `node server.js pack [--all] [--no-adopt]` | adopt dropped files, scrub + encrypt new media, datestamp, record absolute urls, re-encrypt manifest (`--all` also stores GitHub-referenced items locally) |
 | `node server.js splice <video> [--interval 5] [--span 60] [--loop a-b] [--album N] [--graph N]` | slice a video into frames + clips, register them as items, and build a graph |
 | `node server.js import <library.js\|json> [--check] [--drop-dead] [--out media.json]` | build a manifest from a `library` array of `{n, c, x, s, f}` collections |

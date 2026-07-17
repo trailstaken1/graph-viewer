@@ -41,6 +41,8 @@ function manifestForClient() {
       date: it.date || null,
       cover: !!it.cover,
       prompt: it.prompt || null,
+      w: it.w || null,
+      h: it.h || null,
       type: M.typeOf(it),
       url: M.workingUrl(it),
       src: it.src || [],
@@ -154,6 +156,8 @@ if (cmd === 'resolve') {
   require('./lib/adopt').adoptLocal({ dryRun: process.argv.includes('--dry-run') });
 } else if (cmd === 'scrub') {
   require('./lib/scrub').scrubAll();   // sweep ALL of media/ for location/PII metadata
+} else if (cmd === 'dims') {
+  require('./lib/dims').backfillDims();  // record w/h for items missing it
 } else if (cmd && cmd !== 'serve') {
   console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …|adopt|scrub]');
   process.exit(1);

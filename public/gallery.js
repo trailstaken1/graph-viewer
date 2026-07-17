@@ -103,7 +103,10 @@ function layoutMasonry(wrap) {
     for (let i = 1; i < cols; i++) if (heights[i] < heights[c] - 0.5) c = i;
     t.style.left = (c * (colWidth + GAP)) + 'px';
     t.style.top = heights[c] + 'px';
-    heights[c] += t.offsetHeight + GAP;   // offsetHeight = the (aspect-driven) rendered height
+    // known aspect ratio → compute the height (no forced reflow); else measure
+    const ar = parseFloat(t.dataset.ar);
+    const th = ar ? colWidth * ar : t.offsetHeight;
+    heights[c] += th + GAP;
   }
   wrap.style.height = Math.max(0, ...heights) + 'px';
 }
@@ -195,16 +198,25 @@ function tile(it, index, list) {
   const el = document.createElement('div');
   el.className = 'tile';
 
+  // Known dimensions → reserve the slot via aspect-ratio (so layout is instant
+  // and lazy-loading works); unknown → load eagerly and lay out once measured.
+  const hasDims = it.w > 0 && it.h > 0;
+  if (hasDims) el.dataset.ar = it.h / it.w;                 // height ÷ width
+  const ratioCss = hasDims ? `${it.w} / ${it.h}` : '';
+
   if (isVideo(it)) {
     const v = document.createElement('video');
     v.src = it.url; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'metadata';
+    if (ratioCss) v.style.aspectRatio = ratioCss;
     el.appendChild(v);
     el.addEventListener('mouseenter', () => v.play().catch(() => {}));
     el.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
     const badge = document.createElement('div'); badge.className = 'badge'; badge.textContent = '▶'; el.appendChild(badge);
   } else {
     const img = document.createElement('img');
-    img.src = it.url; img.alt = it.title || it.name;   // eager: masonry needs the height
+    img.src = it.url; img.alt = it.title || it.name;
+    img.loading = hasDims ? 'lazy' : 'eager';
+    if (ratioCss) img.style.aspectRatio = ratioCss;
     el.appendChild(img);
   }
 
