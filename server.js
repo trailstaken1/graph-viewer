@@ -150,7 +150,7 @@ if (cmd === 'resolve') {
 } else if (cmd === 'import') {
   require('./lib/import-library').runImport(process.argv.slice(3)).catch(die);
 } else if (cmd === 'adopt') {
-  require('./lib/adopt').adoptLocal();
+  require('./lib/adopt').adoptLocal({ dryRun: process.argv.includes('--dry-run') });
 } else if (cmd && cmd !== 'serve') {
   console.error('usage: node server.js [serve|resolve|pack [--all]|splice <video> …|import <library> …|adopt]');
   process.exit(1);
