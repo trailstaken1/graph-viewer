@@ -66,9 +66,10 @@ html, body {
 }
 .tile .album-tag:hover { color: var(--hot); }
 
-/* masonry (pinterest columns) */
-.masonry { column-width: 250px; column-gap: 14px; }
-.tile { break-inside: avoid; margin: 0 0 14px; position: relative; border-radius: 10px; overflow: hidden; background: var(--panel); cursor: zoom-in; display: block; }
+/* masonry — JS lays tiles out absolutely into the shortest column (see gallery.js) */
+.masonry { position: relative; width: 100%; }
+.tile { position: absolute; top: 0; left: 0; border-radius: 10px; overflow: hidden; background: var(--panel); cursor: zoom-in;
+  transition: top .18s ease, left .18s ease; }
 .tile img, .tile video { width: 100%; display: block; }
 .tile .badge { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 999px; padding: 2px 8px; font-size: 11px; }
 .tile .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px; font-size: 12px;

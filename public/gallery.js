@@ -84,31 +84,39 @@ function render() {
   else renderCompact(visibleItems());                                          // "All" / search
 }
 
-// One compact pinterest masonry across everything, albums A→Z with internal
-// order preserved. The first tile of each album carries the album title as a
-// banner — compact, but still delineated. Tiles index into one flat list so the
-// lightbox arrows step across every visible image.
-function renderCompact(items) {
-  const groups = new Map();
-  for (const it of items) {
-    const a = it.album || '';
-    if (!groups.has(a)) groups.set(a, []);
-    groups.get(a).push(it);
-  }
-  const albums = [...groups.keys()].sort(byAlbum);
-  const flat = [];
-  const heads = new Set();                 // items that open a new album
-  for (const a of albums) {
-    const arr = groups.get(a);
-    if (arr.length) heads.add(arr[0]);
-    flat.push(...arr);
-  }
+/* -------- masonry engine: real pinterest layout (shortest-column, row-first) -- */
 
+const GAP = 14, COL_W = 250;   // target column width
+let activeMasonry = null;
+
+// Lay tiles out by placing each, in order, into the currently shortest column —
+// so the grid fills row-first and each item's slot depends on its aspect ratio.
+function layoutMasonry(wrap) {
+  const width = wrap.clientWidth;
+  if (!width) return;
+  const cols = Math.max(1, Math.floor((width + GAP) / (COL_W + GAP)));
+  const colWidth = (width - (cols - 1) * GAP) / cols;
+  const heights = new Array(cols).fill(0);
+  for (const t of wrap.children) {
+    t.style.width = colWidth + 'px';
+    let c = 0;
+    for (let i = 1; i < cols; i++) if (heights[i] < heights[c] - 0.5) c = i;
+    t.style.left = (c * (colWidth + GAP)) + 'px';
+    t.style.top = heights[c] + 'px';
+    heights[c] += t.offsetHeight + GAP;   // offsetHeight = the (aspect-driven) rendered height
+  }
+  wrap.style.height = Math.max(0, ...heights) + 'px';
+}
+
+// Build a masonry container, then re-layout as images report their real heights
+// (and on resize). Media is loaded eagerly so heights are known without the
+// aspect ratio being stored anywhere.
+function buildMasonry(list, heads) {
   const wrap = document.createElement('div');
   wrap.className = 'masonry';
-  flat.forEach((it, i) => {
-    const t = tile(it, i, flat);
-    if (heads.has(it)) {
+  list.forEach((it, i) => {
+    const t = tile(it, i, list);
+    if (heads && heads.has(it)) {
       const tag = document.createElement('div');
       tag.className = 'album-tag';
       tag.textContent = albumLabel(it.album);
@@ -118,6 +126,41 @@ function renderCompact(items) {
     wrap.appendChild(t);
   });
   stage.appendChild(wrap);
+
+  activeMasonry = wrap;
+  let queued = false;
+  const relayout = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; if (document.body.contains(wrap)) layoutMasonry(wrap); });
+  };
+  wrap.querySelectorAll('img').forEach((img) => {
+    if (!img.complete) { img.addEventListener('load', relayout); img.addEventListener('error', relayout); }
+  });
+  wrap.querySelectorAll('video').forEach((v) => v.addEventListener('loadedmetadata', relayout));
+  relayout();
+}
+
+window.addEventListener('resize', () => { if (activeMasonry && document.body.contains(activeMasonry)) layoutMasonry(activeMasonry); });
+
+// Compact pinterest masonry across everything, albums A→Z, internal order kept.
+// The first tile of each album wears the album title as a banner.
+function renderCompact(items) {
+  const groups = new Map();
+  for (const it of items) {
+    const a = it.album || '';
+    if (!groups.has(a)) groups.set(a, []);
+    groups.get(a).push(it);
+  }
+  const albums = [...groups.keys()].sort(byAlbum);
+  const flat = [];
+  const heads = new Set();
+  for (const a of albums) {
+    const arr = groups.get(a);
+    if (arr.length) heads.add(arr[0]);
+    flat.push(...arr);
+  }
+  buildMasonry(flat, heads);
 }
 
 function renderAlbums() {
@@ -145,10 +188,7 @@ function renderAlbums() {
 }
 
 function renderMasonry(list) {
-  const wrap = document.createElement('div');
-  wrap.className = 'masonry';
-  list.forEach((it, i) => wrap.appendChild(tile(it, i, list)));
-  stage.appendChild(wrap);
+  buildMasonry(list, null);
 }
 
 function tile(it, index, list) {
@@ -164,7 +204,7 @@ function tile(it, index, list) {
     const badge = document.createElement('div'); badge.className = 'badge'; badge.textContent = '▶'; el.appendChild(badge);
   } else {
     const img = document.createElement('img');
-    img.src = it.url; img.loading = 'lazy'; img.alt = it.title || it.name;
+    img.src = it.url; img.alt = it.title || it.name;   // eager: masonry needs the height
     el.appendChild(img);
   }
 
